@@ -103,7 +103,7 @@ public class LaneView implements LaneObserver, ActionListener {
 			pins[i] = new JPanel();
 			pins[i].setBorder(
 				BorderFactory.createTitledBorder(
-					((Bowler) bowlers.get(i)).getNick()));
+					((Bowler) bowlers.get(i)).getNickName()));
 			pins[i].setLayout(new GridLayout(0, 10));
 			for (int k = 0; k != 10; k++) {
 				scores[i][k] = new JPanel();
@@ -160,7 +160,7 @@ public class LaneView implements LaneObserver, ActionListener {
 
 			}
 
-			int[][] lescores = le.getCumulScore();
+			int[][] lescores = le.getCumulativeScores();
 			for (int k = 0; k < numBowlers; k++) {
 				for (int i = 0; i <= le.getFrameNum() - 1; i++) {
 					if (lescores[k][i] != 0)
