@@ -32,7 +32,6 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 
 import java.util.*;
-import java.text.*;
 
 /**
  * Constructor for GUI used to Add Parties to the waiting party queue.
@@ -44,10 +43,9 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 	private int maxSize;
 
 	private JFrame win;
-	private JButton addPatron, newPatron, remPatron, finished;
+	private JButton addPatron, newPatron, removePatron, finished;
 	private JList partyList, allBowlers;
 	private Vector party, bowlerdb;
-	private Integer lock;
 
 	private ControlDeskView controlDesk;
 
@@ -114,11 +112,11 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 		addPatron.addActionListener(this);
 		addPatronPanel.add(addPatron);
 
-		remPatron = new JButton("Remove Member");
+		removePatron = new JButton("Remove Member");
 		JPanel remPatronPanel = new JPanel();
 		remPatronPanel.setLayout(new FlowLayout());
-		remPatron.addActionListener(this);
-		remPatronPanel.add(remPatron);
+		removePatron.addActionListener(this);
+		remPatronPanel.add(removePatron);
 
 		newPatron = new JButton("New Patron");
 		JPanel newPatronPanel = new JPanel();
@@ -166,7 +164,7 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 				}
 			}
 		}
-		if (e.getSource().equals(remPatron)) {
+		if (e.getSource().equals(removePatron)) {
 			if (selectedMember != null) {
 				party.removeElement(selectedMember);
 				partyList.setListData(party);
