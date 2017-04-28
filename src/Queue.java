@@ -11,30 +11,30 @@
 import java.util.Vector;
  
 public class Queue {
-	private Vector v;
+	private Vector vector;
 	
 	/** Queue()
 	 * 
 	 * creates a new queue
 	 */
 	public Queue() {
-		v = new Vector();
+		vector = new Vector();
 	}
 	
 	public Object next() {
-		return v.remove(0);
+		return vector.remove(0);
 	}
 
 	public void add(Object o) {
-		v.addElement(o);
+		vector.addElement(o);
 	}
 	
 	public boolean hasMoreElements() {
-		return v.size() != 0;
+		return vector.size() != 0;
 	}
 
 	public Vector asVector() {
-		return v;
+		return vector;
 	}
 	
 }

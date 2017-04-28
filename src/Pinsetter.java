@@ -75,7 +75,7 @@ import java.lang.Boolean;
 
 public class Pinsetter {
 
-	private Random rnd;
+	private Random rand;
 	private Vector subscribers;
 
 	private boolean[] pins; 
@@ -96,7 +96,7 @@ public class Pinsetter {
 	 * Sends pinsetter events to all subscribers
 	 * 
 	 * @pre none
-	 * @post all subscribers have recieved pinsetter event with updated state
+	 * @post all subscribers have received pinsetter event with updated state
 	 * */
 	private void sendEvent(int jdpins) {	// send events when our state is changd
 		for (int i=0; i < subscribers.size(); i++) {
@@ -115,7 +115,7 @@ public class Pinsetter {
 	 */
 	public Pinsetter() {
 		pins = new boolean[10];
-		rnd = new Random();
+		rand = new Random();
 		subscribers = new Vector();
 		foul = false;
 		reset();
@@ -131,14 +131,14 @@ public class Pinsetter {
 	public void ballThrown() {	// simulated event of ball hits sensor
 		int count = 0;
 		foul = false;
-		double skill = rnd.nextDouble();
+		double skill = rand.nextDouble();
 		for (int i=0; i <= 9; i++) {
 			if (pins[i]) {
-				double pinluck = rnd.nextDouble();
-				if (pinluck <= .04){ 
+				double pinLuck = rand.nextDouble();
+				if (pinLuck <= .04){
 					foul = true;
 				}
-				if ( ((skill + pinluck)/2.0 * 1.2) > .5 ){
+				if ( ((skill + pinLuck)/2.0 * 1.2) > .5 ){
 					pins[i] = false;
 				} 
 				if (!pins[i]) {		// this pin just knocked down
