@@ -24,7 +24,7 @@ public class ScoreHistoryFile {
 		out.close();
 	}
 
-	public static Vector getScores(String nick)
+	public static Vector getScores(String nickName)
 		throws IOException, FileNotFoundException {
 		Vector scores = new Vector();
 
@@ -35,7 +35,7 @@ public class ScoreHistoryFile {
 			// File format is nick\tfname\te-mail
 			String[] scoredata = data.split("\t");
 			//"Nick: scoredata[0] Date: scoredata[1] Score: scoredata[2]
-			if (nick.equals(scoredata[0])) {
+			if (nickName.equals(scoredata[0])) {
 				scores.add(new Score(scoredata[0], scoredata[1], scoredata[2]));
 			}
 		}

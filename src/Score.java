@@ -8,18 +8,18 @@
 
 public class Score {
 
-    private String nick;
+    private String nickName;
     private String date;
     private String score;
 
-    public Score( String nick, String date, String score ) {
-		this.nick=nick;
-		this.date=date;
-		this.score=score;
+    public Score( String nickName, String date, String score ) {
+		this.nickName = nickName;
+		this.date = date;
+		this.score = score;
     }
 
     public String getNickName() {
-        return nick;  
+        return nickName;
     }
 
 	public String getDate() {
@@ -31,7 +31,7 @@ public class Score {
 	}
 
 	public String toString() {
-		return nick + "\t" + date + "\t" + score;
+		return nickName + "\t" + date + "\t" + score;
 	}
 
 }
