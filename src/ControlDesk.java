@@ -60,7 +60,7 @@ class ControlDesk extends Thread {
     /**
      * Constructor for the ControlDesk class
      *
-     * @param numlanes	the numbler of lanes to be represented
+     * @param numLanes	the number of lanes to be represented
      *
      */
 
@@ -122,7 +122,7 @@ class ControlDesk extends Thread {
 	}
 
     /**
-     * Iterate through the available lanes and assign the paties in the wait queue if lanes are available.
+     * Iterate through the available lanes and assign the parties in the wait queue if lanes are available.
      *
      */
 
@@ -148,16 +148,16 @@ class ControlDesk extends Thread {
 	}
 
     /**
-     * Creates a party from a Vector of nickNAmes and adds them to the wait queue.
+     * Creates a party from a Vector of nickNames and adds them to the wait queue.
      *
-     * @param partyNicks	A Vector of NickNames
+     * @param partyNickNames	A Vector of NickNames
      *
      */
 
-	public void addPartyQueue(Vector partyNicks) {
+	public void addPartyQueue(Vector partyNickNames) {
 		Vector partyBowlers = new Vector();
-		for (int i = 0; i < partyNicks.size(); i++) {
-			Bowler newBowler = registerPatron(((String) partyNicks.get(i)));
+		for (int i = 0; i < partyNickNames.size(); i++) {
+			Bowler newBowler = registerPatron(((String) partyNickNames.get(i)));
 			partyBowlers.add(newBowler);
 		}
 		Party newParty = new Party(partyBowlers);
@@ -168,7 +168,7 @@ class ControlDesk extends Thread {
     /**
      * Returns a Vector of party names to be displayed in the GUI representation of the wait queue.
 	 *
-     * @return a Vecotr of Strings
+     * @return a Vector of Strings
      *
      */
 
