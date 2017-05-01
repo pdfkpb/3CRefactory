@@ -28,15 +28,15 @@ import java.util.HashMap;
 public class LaneEvent {
 
 	private Party party;
-	int frame;
-	int ball;
-	Bowler bowler;
-	int[][] cumulativeScores;
-	HashMap score;
-	int index;
-	int frameNum;
-	int[] currentScores;
-	boolean mechProb;
+	private int frame;
+	private int ball;
+	private Bowler bowler;
+	private int[][] cumulativeScores;
+	private HashMap score;
+	private int index;
+	private int frameNum;
+	private int[] currentScores;
+	private boolean mechProb;
 	
 	public LaneEvent( Party party, int index, Bowler bowler, int[][] cumulativeScores, HashMap score, int frameNum, int[] currentScores, int ball, boolean mechProblem) {
 		this.party = party;

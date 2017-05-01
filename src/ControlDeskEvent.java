@@ -33,10 +33,8 @@ public class ControlDeskEvent {
 
     /**
      * Accessor for partyQueue
-     * @param key the key of the vertex being looked for.
-     *
+	 *
      * @return a Vector of Strings representing the names of the parties in the wait queue
-     *
      */
 
 	public Vector getPartyQueue() {

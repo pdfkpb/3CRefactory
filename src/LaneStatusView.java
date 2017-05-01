@@ -9,8 +9,6 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
 
 public class LaneStatusView implements ActionListener, LaneObserver, PinsetterObserver {
 
@@ -146,10 +144,11 @@ public class LaneStatusView implements ActionListener, LaneObserver, PinsetterOb
 		}
 	}
 
-	public void receivePinsetterEvent(PinsetterEvent pinEvent) {
-		pinsDown.setText( ( new Integer(pinEvent.totalPinsDown()) ).toString() );
-//		foul.setText( ( new Boolean(pe.isFoulCommited()) ).toString() );
-		
+
+	public void receivePinsetterEvent(PinsetterEvent pe) {
+		pinsDown.setText( ( new Integer(pe.totalPinsDown()) ).toString() );
+		foul.setText( ( new Boolean(pe.isFoulCommitted()) ).toString() );
+
 	}
 
 }
