@@ -5,7 +5,7 @@ import java.util.Vector;
 /**
  * Created by Jethro Masangya on 5/1/2017.
  */
-public abstract class RunState {
+public abstract class RunState extends Thread{
 
     public void resetBowlerIterator(Iterator bowlerIterator, Party party){
         bowlerIterator = (party.getMembers()).iterator();
