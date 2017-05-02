@@ -36,7 +36,7 @@ public abstract class RunState {
         }
     }
 
-    public abstract void run(boolean partyAssigned, boolean gameFinished, boolean gameIsHalted,
+    public abstract void run(Party party, boolean partyAssigned, boolean gameFinished, boolean gameIsHalted,
                              Iterator bowlerIterator, Bowler currentThrower, boolean canThrowAgain,
                              boolean tenthFrameStrike, int ball, Pinsetter setter, int frameNumber,
                              int[][] finalScores, int bowlIndex, int gameNumber, int[][] cumulativeScores);
