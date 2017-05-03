@@ -39,5 +39,5 @@ public abstract class RunState extends Thread{
     public abstract void run(Party party, boolean partyAssigned, boolean gameFinished, boolean gameIsHalted,
                              Iterator bowlerIterator, Bowler currentThrower, boolean canThrowAgain,
                              boolean tenthFrameStrike, int ball, Pinsetter setter, int frameNumber,
-                             int[][] finalScores, int bowlIndex, int gameNumber, int[][] cumulativeScores);
+                             int[][] finalScores, int bowlIndex, int gameNumber, int[][] cumulativeScores, HashMap scores, LaneEvent laneEvent, Vector subscribers);
 }
