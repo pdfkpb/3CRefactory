@@ -5,7 +5,7 @@ import java.util.Vector;
 /**
  * Created by Jethro Masangya on 5/1/2017.
  */
-public abstract class RunState {
+public abstract class RunState extends Thread{
 
     public void resetBowlerIterator(Iterator bowlerIterator, Party party){
         bowlerIterator = (party.getMembers()).iterator();
@@ -36,7 +36,7 @@ public abstract class RunState {
         }
     }
 
-    public abstract void run(boolean partyAssigned, boolean gameFinished, boolean gameIsHalted,
+    public abstract void run(Party party, boolean partyAssigned, boolean gameFinished, boolean gameIsHalted,
                              Iterator bowlerIterator, Bowler currentThrower, boolean canThrowAgain,
                              boolean tenthFrameStrike, int ball, Pinsetter setter, int frameNumber,
                              int[][] finalScores, int bowlIndex, int gameNumber, int[][] cumulativeScores);
