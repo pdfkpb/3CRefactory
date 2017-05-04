@@ -13,6 +13,8 @@ public class GameFinishedState extends RunState
         endGamePrompt = null;
 
 
+        boolean playagain = true;
+
         System.out.println("result was: " + result);
 
         // TODO: send record of scores to control desk
@@ -21,6 +23,8 @@ public class GameFinishedState extends RunState
             resetBowlerIterator(bowlerIterator, party);
 
         } else if (result == 2) {           // no, dont want to play another game
+            playagain = false;
+
             Vector printVector;
             EndGameReport endGameReport = new EndGameReport( ((Bowler)party.getMembers().get(0)).getNickName() + "'s Party", party);
             printVector = endGameReport.getResult();
@@ -43,8 +47,8 @@ public class GameFinishedState extends RunState
                         sr.sendPrintout();
                     }
                 }
-
             }
         }
+
     }
 }
