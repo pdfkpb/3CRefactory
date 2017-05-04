@@ -209,10 +209,15 @@ public class Lane extends Thread implements PinsetterObserver {
                     currentState = states.get("finished");
                 }
 
-                currentState.run(party, partyAssigned, gameFinished, gameIsHalted, bowlerIterator,
-                        currentThrower, canThrowAgain, tenthFrameStrike, ball, setter, frameNumber,
-                        finalScores, bowlIndex, gameNumber, cumulativeScores, scores, lanePublish(),
-                        subscribers);
+                currentState.setFrameInformation();
+				currentState.setGameFlags();
+				currentState.setBowlerInformation();
+				currentState.setGameInformation();
+				currentState.setLaneInformation();
+				currentState.setParty();
+				currentState.setScoreInformation();
+
+                currentState.run(lanePublish());
             }
 
 //

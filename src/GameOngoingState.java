@@ -3,17 +3,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 
-/**
- * Created by Jethro Masangya on 5/1/2017.
- */
 public class GameOngoingState extends RunState {
 
     @Override
-    public void run(Party party, boolean partyAssigned, boolean gameFinished,
-                    boolean gameIsHalted, Iterator bowlerIterator, Bowler currentThrower,
-                    boolean canThrowAgain, boolean tenthFrameStrike, int ball,
-                    Pinsetter setter, int frameNumber, int[][] finalScores, int bowlIndex,
-                    int gameNumber, int[][] cumulativeScores, HashMap scores, LaneEvent laneEvent, Vector subscribers) {
+    public void run(LaneEvent laneEvent) {
 
         while (gameIsHalted) {
             try {
@@ -46,7 +39,7 @@ public class GameOngoingState extends RunState {
 
         } else {
             frameNumber++;
-            resetBowlerIterator(bowlerIterator, party);
+            resetBowlerIterator();
             bowlIndex = 0;
             if (frameNumber > 9) {
                 gameFinished = true;
