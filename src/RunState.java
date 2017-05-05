@@ -102,5 +102,28 @@ public abstract class RunState extends Thread
         this.subscribers = subscribers;
     }
 
+    public Party getParty(){return this.party;}
+    public boolean getPartyAssigned(){return this.partyAssigned;}
+    public boolean getGameFinished(){return this.gameFinished;}
+    public boolean getGameIsHalted(){return this.gameIsHalted;}
+    public Iterator getBowlerIterator(){return this.bowlerIterator;}
+    public int getBall(){return this.ball;}
+    public int getBowlIndex(){return this.bowlIndex;}
+    public int getFrameNumber(){return this.frameNumber;}
+    public boolean getTenthFrameStrike(){return this.tenthFrameStrike;}
+
+    public int[] getCurrentScores(){return this.currentScores;}
+    public int[][] getCumulativeScores(){return this.cumulativeScores;}
+    public boolean getCanThrowAgain(){return this.canThrowAgain;}
+
+    public int[][] getFinalScores(){return this.finalScores;}
+    public int getGameNumber(){return this.gameNumber;}
+    public Bowler getCurrentThrower(){return this.currentThrower;}
+    public Pinsetter getSetter(){return this.setter;}
+    public HashMap getScores(){return this.scores;}
+    public Vector getSubscribers(){return this.subscribers;}
+
+    public boolean getPlayAgain(){return this.playAgain;}
+
     public abstract void run(LaneEvent laneEvent);
 }

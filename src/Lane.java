@@ -209,15 +209,38 @@ public class Lane extends Thread implements PinsetterObserver {
                     currentState = states.get("finished");
                 }
 
-                currentState.setFrameInformation();
-				currentState.setGameFlags();
-				currentState.setBowlerInformation();
-				currentState.setGameInformation();
-				currentState.setLaneInformation();
-				currentState.setParty();
-				currentState.setScoreInformation();
+                currentState.setFrameInformation(this.tenthFrameStrike, this.frameNumber);
+				currentState.setGameFlags(this.gameFinished, this.gameIsHalted);
+				currentState.setBowlerInformation(this.bowlerIterator, this.currentThrower, this.canThrowAgain, this.bowlIndex);
+				currentState.setGameInformation(this.gameNumber, this.subscribers);
+				currentState.setLaneInformation(this.ball, this.setter);
+				currentState.setParty(this.party, this.partyAssigned);
+				currentState.setScoreInformation(this.finalScores, this.cumulativeScores, this.scores);
 
                 currentState.run(lanePublish());
+
+				this.party = currentState.getParty();
+				this.partyAssigned = currentState.getPartyAssigned();
+				this.gameFinished = currentState.getGameFinished();
+				this.gameIsHalted = currentState.getGameIsHalted();
+				this.bowlerIterator = currentState.getBowlerIterator();
+				this.ball = currentState.getBall();
+				this.bowlIndex = currentState.getBowlIndex();
+				this.frameNumber = currentState.getFrameNumber();
+				this.tenthFrameStrike = currentState.getTenthFrameStrike();
+
+				this.currentScores = currentState.getCurrentScores();
+				this.cumulativeScores = currentState.getCumulativeScores();
+				this.canThrowAgain = currentState.getCanThrowAgain();
+
+				this.finalScores = currentState.getFinalScores();
+				this.gameNumber = currentState.getGameNumber();
+				this.currentThrower = currentState.getCurrentThrower();
+				this.setter = currentState.getSetter();
+				this.scores = currentState.getScores();
+				this.subscribers = currentState.getSubscribers();
+
+				playagain = currentState.getPlayAgain();
             }
 
 //
