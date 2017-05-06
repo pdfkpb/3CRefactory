@@ -1,17 +1,19 @@
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 
-public class GameFinishedState extends RunState
-{
+public class LaneFinishedState extends LaneRunState {
+
+    public LaneFinishedState(){
+
+    }
+
     @Override
-    public void run(LaneEvent laneEvent)
-    {
-        EndGamePrompt endGamePrompt = new EndGamePrompt( ((Bowler) this.party.getMembers().get(0)).getNickName() + "'s Party" );
+    public void run() {
+        EndGamePrompt endGamePrompt = new EndGamePrompt( ((Bowler) party.getMembers().get(0)).getNickName() + "'s Party" );
         int result = endGamePrompt.getResult();
         endGamePrompt.destroy();
 
-        playAgain = true;
+        //playAgain = true;
 
         System.out.println("result was: " + result);
 
@@ -21,7 +23,7 @@ public class GameFinishedState extends RunState
             resetBowlerIterator();
 
         } else if (result == 2) {           // no, dont want to play another game
-            playAgain = false;
+            //playAgain = false;
 
             Vector printVector;
             EndGameReport endGameReport = new EndGameReport( ((Bowler)party.getMembers().get(0)).getNickName() + "'s Party", party);
@@ -31,7 +33,7 @@ public class GameFinishedState extends RunState
             party = null;
             partyAssigned = false;
 
-            publish(laneEvent);
+            publish(lanePublish());
 
             int myIndex = 0;
             while (scoreIt.hasNext()){

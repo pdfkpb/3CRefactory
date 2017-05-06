@@ -134,8 +134,6 @@
 import java.util.Vector;
 import java.util.Iterator;
 import java.util.HashMap;
-import java.util.Date;
-import java.util.concurrent.ExecutionException;
 
 public class Lane extends Thread implements PinsetterObserver {	
 	private Party party;
@@ -162,8 +160,8 @@ public class Lane extends Thread implements PinsetterObserver {
 	
 	private Bowler currentThrower;			// = the thrower who just took a throw
 
-	private HashMap<String, RunState> states;
-    private RunState currentState;
+	private HashMap<String, LaneRunState> states;
+    private LaneRunState currentState;
 
 	/** Lane()
 	 * 
@@ -182,12 +180,16 @@ public class Lane extends Thread implements PinsetterObserver {
 
 		gameNumber = 0;
 
+		states = new HashMap<>();
+		states.put("ongoing", new LaneOngoingState());
+		states.put("finished", new LaneFinishedState());
+
+		currentState = states.get("finished");
+        setLaneSatesInfo();
+
 		setter.subscribe( this );
 
-        states = new HashMap<>();
-        states.put("ongoing", new GameOngoingState());
-        states.put("finished", new GameFinishedState());
-
+        getLaneStateInfo();
 		this.start();
 	}
 
@@ -200,101 +202,25 @@ public class Lane extends Thread implements PinsetterObserver {
         boolean playagain = true;
 
 		while (playagain) {
-            //System.out.println(partyAssigned);
-            if (partyAssigned){
-                if (!gameFinished){
+            getLaneStateInfo();
+            if (currentState.isPartyAssigned()) {
+                if (!currentState.isGameFinished()) {
                     currentState = states.get("ongoing");
-                }
-                else {
+                    setLaneSatesInfo();
+                } else {
                     currentState = states.get("finished");
+                    setLaneSatesInfo();
                 }
+                currentState.run();
+                getLaneStateInfo();
 
-                currentState.setFrameInformation(this.tenthFrameStrike, this.frameNumber);
-				currentState.setGameFlags(this.gameFinished, this.gameIsHalted);
-				currentState.setBowlerInformation(this.bowlerIterator, this.currentThrower, this.canThrowAgain, this.bowlIndex);
-				currentState.setGameInformation(this.gameNumber, this.subscribers);
-				currentState.setLaneInformation(this.ball, this.setter);
-				currentState.setParty(this.party, this.partyAssigned);
-				currentState.setScoreInformation(this.finalScores, this.cumulativeScores, this.scores);
-
-                currentState.run(lanePublish());
-
-				this.party = currentState.getParty();
-				this.partyAssigned = currentState.getPartyAssigned();
-				this.gameFinished = currentState.getGameFinished();
-				this.gameIsHalted = currentState.getGameIsHalted();
-				this.bowlerIterator = currentState.getBowlerIterator();
-				this.ball = currentState.getBall();
-				this.bowlIndex = currentState.getBowlIndex();
-				this.frameNumber = currentState.getFrameNumber();
-				this.tenthFrameStrike = currentState.getTenthFrameStrike();
-
-				this.currentScores = currentState.getCurrentScores();
-				this.cumulativeScores = currentState.getCumulativeScores();
-				this.canThrowAgain = currentState.getCanThrowAgain();
-
-				this.finalScores = currentState.getFinalScores();
-				this.gameNumber = currentState.getGameNumber();
-				this.currentThrower = currentState.getCurrentThrower();
-				this.setter = currentState.getSetter();
-				this.scores = currentState.getScores();
-				this.subscribers = currentState.getSubscribers();
-
-				playagain = currentState.getPlayAgain();
             }
 
-//
-//			if (partyAssigned && !gameFinished) {	// we have a party on this lane,
-//								// so next bower can take a throw
-//
-//				while (gameIsHalted) {
-//					try {
-//						sleep(10);
-//					} catch (Exception e) {}
-//				}
-//
-//
-//				if (bowlerIterator.hasNext()) {
-//					currentThrower = (Bowler)bowlerIterator.next();
-//
-//					canThrowAgain = true;
-//					tenthFrameStrike = false;
-//					ball = 0;
-//					while (canThrowAgain) {
-//						setter.ballThrown();		// simulate the thrower's ball hiting
-//						ball++;
-//					}
-//
-//					if (frameNumber == 9){
-//						finalScores[bowlIndex][gameNumber] = cumulativeScores[bowlIndex][9];
-//						try{
-//						Date date = new Date();
-//						String dateString = "" + date.getHours() + ":" + date.getMinutes() + " " + date.getMonth() + "/" + date.getDay() + "/" + (date.getYear() + 1900);
-//						ScoreHistoryFile.addScore(currentThrower.getNickName(), dateString, new Integer(cumulativeScores[bowlIndex][9]).toString());
-//						} catch (Exception e) {System.err.println("Exception in addScore. "+ e );}
-//					}
-//
-//					setter.reset();
-//					bowlIndex++;
-//
-//				} else {
-//					frameNumber++;
-//					resetBowlerIterator();
-//					bowlIndex = 0;
-//					if (frameNumber > 9) {
-//						gameFinished = true;
-//						gameNumber++;
-//					}
-//				}
-//			} else if (partyAssigned && gameFinished) {
-//
-//			}
-			
-			
-			try {
-				sleep(10);
-			} catch (Exception e) {}
-		}
+            try {
+                sleep(10);
+            } catch (Exception e) {
+            }
+        }
 	}
 	
 	/** recievePinsetterEvent()
@@ -308,42 +234,43 @@ public class Lane extends Thread implements PinsetterObserver {
 	 */
 	public void receivePinsetterEvent(PinsetterEvent pe) {
 
-            if (pe.pinsDownOnThisThrow() >=  0) {			// this is a real throw
-				markScore(currentThrower, frameNumber + 1, pe.getThrowNumber(), pe.pinsDownOnThisThrow());
-
-				// next logic handles the ?: what conditions dont allow them another throw?
-				// handle the case of 10th frame first
-				if (frameNumber == 9) {
-					if (pe.totalPinsDown() == 10) {
-						setter.resetPins();
-						if(pe.getThrowNumber() == 1) {
-							tenthFrameStrike = true;
-						}
-					}
-
-					if (((pe.totalPinsDown() != 10) && (pe.getThrowNumber() == 2 && !tenthFrameStrike)) || (pe.getThrowNumber() == 3)) {
-						canThrowAgain = false;
-						//publish( lanePublish() );
-					}
-
-//					if (pe.getThrowNumber() == 3) {
-//						canThrowAgain = false;
-						//publish( lanePublish() );
+		currentState.receivePinsetterEvent(pe);
+//            if (pe.pinsDownOnThisThrow() >=  0) {			// this is a real throw
+//				markScore(currentThrower, frameNumber + 1, pe.getThrowNumber(), pe.pinsDownOnThisThrow());
+//
+//				// next logic handles the ?: what conditions dont allow them another throw?
+//				// handle the case of 10th frame first
+//				if (frameNumber == 9) {
+//					if (pe.totalPinsDown() == 10) {
+//						setter.resetPins();
+//						if(pe.getThrowNumber() == 1) {
+//							tenthFrameStrike = true;
+//						}
 //					}
-				} else { // its not the 10th frame
-
-					if ((pe.pinsDownOnThisThrow() == 10) || (pe.getThrowNumber() == 2)) {		// threw a strike
-						canThrowAgain = false;
-						//publish( lanePublish() );
-//					} else if (pe.getThrowNumber() == 2) {
+//
+//					if (((pe.totalPinsDown() != 10) && (pe.getThrowNumber() == 2 && !tenthFrameStrike)) || (pe.getThrowNumber() == 3)) {
 //						canThrowAgain = false;
 //						//publish( lanePublish() );
-					} else if (pe.getThrowNumber() == 3)
-						System.out.println("I'm here...");
-				}
-			}
-//            else {								//  this is not a real throw, probably a reset
+//					}
+//
+////					if (pe.getThrowNumber() == 3) {
+////						canThrowAgain = false;
+//						//publish( lanePublish() );
+////					}
+//				} else { // its not the 10th frame
+//
+//					if ((pe.pinsDownOnThisThrow() == 10) || (pe.getThrowNumber() == 2)) {		// threw a strike
+//						canThrowAgain = false;
+//						//publish( lanePublish() );
+////					} else if (pe.getThrowNumber() == 2) {
+////						canThrowAgain = false;
+////						//publish( lanePublish() );
+//					} else if (pe.getThrowNumber() == 3)
+//						System.out.println("I'm here...");
+//				}
 //			}
+////            else {								//  this is not a real throw, probably a reset
+////			}
 	}
 	
 	/** resetBowlerIterator()
@@ -389,16 +316,18 @@ public class Lane extends Thread implements PinsetterObserver {
 	 * @param theParty		Party to be assigned
 	 */
 	public void assignParty( Party theParty ) {
-		party = theParty;
-		resetBowlerIterator();
-		partyAssigned = true;
-		
-		currentScores = new int[party.getMembers().size()];
-		cumulativeScores = new int[party.getMembers().size()][10];
-		finalScores = new int[party.getMembers().size()][128]; //Hardcoding a max of 128 games, bite me.
-		gameNumber = 0;
-		
-		resetScores();
+		currentState.assignParty(theParty);
+
+//		party = theParty;
+//		resetBowlerIterator();
+//		partyAssigned = true;
+//
+//		currentScores = new int[party.getMembers().size()];
+//		cumulativeScores = new int[party.getMembers().size()][10];
+//		finalScores = new int[party.getMembers().size()][128]; //Hardcoding a max of 128 games, bite me.
+//		gameNumber = 0;
+//
+//		resetScores();
 	}
 
 	/** markScore()
@@ -429,7 +358,8 @@ public class Lane extends Thread implements PinsetterObserver {
 	 * @return		The new lane event
 	 */
 	private LaneEvent lanePublish(  ) {
-		return new LaneEvent(party, bowlIndex, currentThrower, cumulativeScores, scores, frameNumber+1, currentScores, ball, gameIsHalted);
+//		return new LaneEvent(party, bowlIndex, currentThrower, cumulativeScores, scores, frameNumber+1, currentScores, ball, gameIsHalted);
+		return currentState.lanePublish();
 	}
 
 	/** getScore()
@@ -550,7 +480,7 @@ public class Lane extends Thread implements PinsetterObserver {
 	 * @return true if party assigned, false otherwise
 	 */
 	public boolean isPartyAssigned() {
-		return partyAssigned;
+		return currentState.isPartyAssigned();
 	}
 	
 	/** isGameFinished
@@ -558,7 +488,7 @@ public class Lane extends Thread implements PinsetterObserver {
 	 * @return true if the game is done, false otherwise
 	 */
 	public boolean isGameFinished() {
-		return gameFinished;
+		return currentState.isGameFinished();
 	}
 
 	/** subscribe
@@ -569,7 +499,7 @@ public class Lane extends Thread implements PinsetterObserver {
 	 */
 
 	public void subscribe( LaneObserver laneObserver ) {
-		subscribers.add( laneObserver );
+		currentState.subscribe(laneObserver);
 	}
 
 	/** unsubscribe
@@ -580,7 +510,7 @@ public class Lane extends Thread implements PinsetterObserver {
 	 */
 	
 	public void unsubscribe( LaneObserver removing ) {
-		subscribers.remove( removing );
+		currentState.unsubscribe(removing);
 	}
 
 	/** publish
@@ -591,13 +521,15 @@ public class Lane extends Thread implements PinsetterObserver {
 	 */
 
 	public void publish( LaneEvent event ) {
-		if( subscribers.size() > 0 ) {
-			Iterator eventIterator = subscribers.iterator();
-			
-			while ( eventIterator.hasNext() ) {
-				( (LaneObserver) eventIterator.next()).receiveLaneEvent( event );
-			}
-		}
+
+		currentState.publish(event);
+//		if( subscribers.size() > 0 ) {
+//			Iterator eventIterator = subscribers.iterator();
+//
+//			while ( eventIterator.hasNext() ) {
+//				( (LaneObserver) eventIterator.next()).receiveLaneEvent( event );
+//			}
+//		}
 	}
 
 	/**
@@ -607,23 +539,54 @@ public class Lane extends Thread implements PinsetterObserver {
 	 */
 
 	public Pinsetter getPinsetter() {
-		return setter;	
+		return currentState.getPinsetter();
 	}
 
 	/**
 	 * Pause the execution of this game
 	 */
 	public void pauseGame() {
-		gameIsHalted = true;
-		publish(lanePublish());
+		currentState.pauseGame();
+//		gameIsHalted = true;
+//		publish(lanePublish());
 	}
 	
 	/**
 	 * Resume the execution of this game
 	 */
 	public void unPauseGame() {
-		gameIsHalted = false;
-		publish(lanePublish());
+		currentState.unPauseGame();
+//		gameIsHalted = false;
+//		publish(lanePublish());
 	}
+
+    private void setLaneSatesInfo(){
+        currentState.setInfo(party, setter, scores, subscribers, gameIsHalted, partyAssigned, gameFinished,
+                bowlerIterator, ball, bowlIndex, frameNumber, tenthFrameStrike, currentScores, cumulativeScores,
+                canThrowAgain, finalScores, gameNumber, currentThrower);
+    }
+
+    private void getLaneStateInfo(){
+        this.party = currentState.getParty();
+        this.partyAssigned = currentState.getPartyAssigned();
+        this.gameFinished = currentState.getGameFinished();
+        this.gameIsHalted = currentState.getGameIsHalted();
+        this.bowlerIterator = currentState.getBowlerIterator();
+        this.ball = currentState.getBall();
+        this.bowlIndex = currentState.getBowlIndex();
+        this.frameNumber = currentState.getFrameNumber();
+        this.tenthFrameStrike = currentState.getTenthFrameStrike();
+
+        this.currentScores = currentState.getCurrentScores();
+        this.cumulativeScores = currentState.getCumulativeScores();
+        this.canThrowAgain = currentState.getCanThrowAgain();
+
+        this.finalScores = currentState.getFinalScores();
+        this.gameNumber = currentState.getGameNumber();
+        this.currentThrower = currentState.getCurrentThrower();
+        this.setter = currentState.getSetter();
+        this.scores = currentState.getScores();
+        this.subscribers = currentState.getSubscribers();
+    }
 
 }

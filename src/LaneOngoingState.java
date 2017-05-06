@@ -1,13 +1,13 @@
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Vector;
 
-public class GameOngoingState extends RunState {
+public class LaneOngoingState extends LaneRunState {
+
+    public LaneOngoingState(){
+
+    }
 
     @Override
-    public void run(LaneEvent laneEvent) {
-
+    public void run() {
         while (gameIsHalted) {
             try {
                 sleep(10);
