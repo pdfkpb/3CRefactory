@@ -197,11 +197,12 @@ public abstract class LaneRunState extends Thread implements PinsetterObserver
                     }
 
                     //add his last frame's cumul to this ball, make it this frame's cumul.
-                    if(curScore[i] != -2){
-                        cumulativeScores[bowlIndex][i/2] += cumulativeScores[bowlIndex][i/2 - 1] + curScore[i];
-                    }
-                    else {
-                        cumulativeScores[bowlIndex][i/2] += cumulativeScores[bowlIndex][i/2 - 1];
+                    else if (i/2 != 9) {
+                        if (curScore[i] != -2) {
+                            cumulativeScores[bowlIndex][i / 2] += cumulativeScores[bowlIndex][i / 2 - 1] + curScore[i];
+                        } else {
+                            cumulativeScores[bowlIndex][i / 2] += cumulativeScores[bowlIndex][i / 2 - 1];
+                        }
                     }
 
                 }
