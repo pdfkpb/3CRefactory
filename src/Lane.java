@@ -232,44 +232,7 @@ public class Lane extends Thread implements PinsetterObserver {
 	 * @param pe 		The pinsetter event that has been received.
 	 */
 	public void receivePinsetterEvent(PinsetterEvent pe) {
-
 		currentState.receivePinsetterEvent(pe);
-//            if (pe.pinsDownOnThisThrow() >=  0) {			// this is a real throw
-//				markScore(currentThrower, frameNumber + 1, pe.getThrowNumber(), pe.pinsDownOnThisThrow());
-//
-//				// next logic handles the ?: what conditions dont allow them another throw?
-//				// handle the case of 10th frame first
-//				if (frameNumber == 9) {
-//					if (pe.totalPinsDown() == 10) {
-//						setter.resetPins();
-//						if(pe.getThrowNumber() == 1) {
-//							tenthFrameStrike = true;
-//						}
-//					}
-//
-//					if (((pe.totalPinsDown() != 10) && (pe.getThrowNumber() == 2 && !tenthFrameStrike)) || (pe.getThrowNumber() == 3)) {
-//						canThrowAgain = false;
-//						//publish( lanePublish() );
-//					}
-//
-////					if (pe.getThrowNumber() == 3) {
-////						canThrowAgain = false;
-//						//publish( lanePublish() );
-////					}
-//				} else { // its not the 10th frame
-//
-//					if ((pe.pinsDownOnThisThrow() == 10) || (pe.getThrowNumber() == 2)) {		// threw a strike
-//						canThrowAgain = false;
-//						//publish( lanePublish() );
-////					} else if (pe.getThrowNumber() == 2) {
-////						canThrowAgain = false;
-////						//publish( lanePublish() );
-//					} else if (pe.getThrowNumber() == 3)
-//						System.out.println("I'm here...");
-//				}
-//			}
-////            else {								//  this is not a real throw, probably a reset
-////			}
 	}
 	
 	/** resetBowlerIterator()
@@ -316,17 +279,6 @@ public class Lane extends Thread implements PinsetterObserver {
 	 */
 	public void assignParty( Party theParty ) {
 		currentState.assignParty(theParty);
-
-//		party = theParty;
-//		resetBowlerIterator();
-//		partyAssigned = true;
-//
-//		currentScores = new int[party.getMembers().size()];
-//		cumulativeScores = new int[party.getMembers().size()][10];
-//		finalScores = new int[party.getMembers().size()][128]; //Hardcoding a max of 128 games, bite me.
-//		gameNumber = 0;
-//
-//		resetScores();
 	}
 
 	/** markScore()
@@ -357,7 +309,6 @@ public class Lane extends Thread implements PinsetterObserver {
 	 * @return		The new lane event
 	 */
 	private LaneEvent lanePublish(  ) {
-//		return new LaneEvent(party, bowlIndex, currentThrower, cumulativeScores, scores, frameNumber+1, currentScores, ball, gameIsHalted);
 		return currentState.lanePublish();
 	}
 
@@ -516,15 +467,7 @@ public class Lane extends Thread implements PinsetterObserver {
 	 */
 
 	public void publish( LaneEvent event ) {
-
 		currentState.publish(event);
-//		if( subscribers.size() > 0 ) {
-//			Iterator eventIterator = subscribers.iterator();
-//
-//			while ( eventIterator.hasNext() ) {
-//				( (LaneObserver) eventIterator.next()).receiveLaneEvent( event );
-//			}
-//		}
 	}
 
 	/**
@@ -542,8 +485,6 @@ public class Lane extends Thread implements PinsetterObserver {
 	 */
 	public void pauseGame() {
 		currentState.pauseGame();
-//		gameIsHalted = true;
-//		publish(lanePublish());
 	}
 	
 	/**
@@ -551,16 +492,20 @@ public class Lane extends Thread implements PinsetterObserver {
 	 */
 	public void unPauseGame() {
 		currentState.unPauseGame();
-//		gameIsHalted = false;
-//		publish(lanePublish());
 	}
 
+    /**
+     * Sets the information that's in states equal to the information in the class.
+     */
     private void setLaneSatesInfo(){
         currentState.setInfo(party, setter, scores, subscribers, gameIsHalted, partyAssigned, gameFinished,
                 bowlerIterator, ball, bowlIndex, frameNumber, tenthFrameStrike, currentScores, cumulativeScores,
                 canThrowAgain, finalScores, gameNumber, currentThrower);
     }
 
+    /**
+     * Extracts all the information in the states.
+     */
     private void getLaneStateInfo(){
         this.party = currentState.getParty();
         this.partyAssigned = currentState.getPartyAssigned();
