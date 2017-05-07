@@ -14,6 +14,8 @@ public class LaneOngoingState extends LaneRunState {
             } catch (Exception e) {}
         }
 
+        playAgain = true;
+
         if (bowlerIterator.hasNext()) {
             currentThrower = (Bowler)bowlerIterator.next();
 

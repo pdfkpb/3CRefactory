@@ -13,7 +13,7 @@ public class LaneFinishedState extends LaneRunState {
         int result = endGamePrompt.getResult();
         endGamePrompt.destroy();
 
-        //playAgain = true;
+        playAgain = true;
 
         System.out.println("result was: " + result);
 
@@ -23,7 +23,7 @@ public class LaneFinishedState extends LaneRunState {
             resetBowlerIterator();
 
         } else if (result == 2) {           // no, dont want to play another game
-            //playAgain = false;
+            playAgain = false;
 
             Vector printVector;
             EndGameReport endGameReport = new EndGameReport( ((Bowler)party.getMembers().get(0)).getNickName() + "'s Party", party);

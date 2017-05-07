@@ -184,7 +184,7 @@ public class Lane extends Thread implements PinsetterObserver {
 		states.put("ongoing", new LaneOngoingState());
 		states.put("finished", new LaneFinishedState());
 
-		currentState = states.get("finished");
+		currentState = states.get("ongoing");
         setLaneSatesInfo();
 
 		setter.subscribe( this );
@@ -198,13 +198,12 @@ public class Lane extends Thread implements PinsetterObserver {
 	 * entry point for execution of this lane 
 	 */
 	public void run() {
-
-        boolean playagain = true;
-
-		while (playagain) {
+        currentState.setPlayAgain(true);
+        while (true) {
+            //System.out.println(isPartyAssigned());
             getLaneStateInfo();
-            if (currentState.isPartyAssigned()) {
-                if (!currentState.isGameFinished()) {
+            if (isPartyAssigned()) {
+                if (!isGameFinished()) {
                     currentState = states.get("ongoing");
                     setLaneSatesInfo();
                 } else {

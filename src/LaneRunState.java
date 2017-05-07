@@ -32,7 +32,7 @@ public abstract class LaneRunState extends Thread implements PinsetterObserver
     protected Bowler currentThrower;
 
 
-//    protected boolean playAgain;
+    protected boolean playAgain;
 
 
     public abstract void run();
@@ -297,62 +297,29 @@ public abstract class LaneRunState extends Thread implements PinsetterObserver
         this.currentThrower = currentThrower;
     }
 
-    public Party getParty(){return this.party;}
-    public boolean getPartyAssigned(){return this.partyAssigned;}
-    public boolean getGameFinished(){return this.gameFinished;}
-    public boolean getGameIsHalted(){return this.gameIsHalted;}
-    public Iterator getBowlerIterator(){return this.bowlerIterator;}
-    public int getBall(){return this.ball;}
-    public int getBowlIndex(){return this.bowlIndex;}
-    public int getFrameNumber(){return this.frameNumber;}
-    public boolean getTenthFrameStrike(){return this.tenthFrameStrike;}
+    public Party getParty(){return party;}
+    public boolean getPartyAssigned(){return partyAssigned;}
+    public boolean getGameFinished(){return gameFinished;}
+    public boolean getGameIsHalted(){return gameIsHalted;}
+    public Iterator getBowlerIterator(){return bowlerIterator;}
+    public int getBall(){return ball;}
+    public int getBowlIndex(){return bowlIndex;}
+    public int getFrameNumber(){return frameNumber;}
+    public boolean getTenthFrameStrike(){return tenthFrameStrike;}
 
-    public int[] getCurrentScores(){return this.currentScores;}
-    public int[][] getCumulativeScores(){return this.cumulativeScores;}
-    public boolean getCanThrowAgain(){return this.canThrowAgain;}
+    public int[] getCurrentScores(){return currentScores;}
+    public int[][] getCumulativeScores(){return cumulativeScores;}
+    public boolean getCanThrowAgain(){return canThrowAgain;}
 
-    public int[][] getFinalScores(){return this.finalScores;}
-    public int getGameNumber(){return this.gameNumber;}
-    public Bowler getCurrentThrower(){return this.currentThrower;}
-    public Pinsetter getSetter(){return this.setter;}
-    public HashMap getScores(){return this.scores;}
-    public Vector getSubscribers(){return this.subscribers;}
+    public int[][] getFinalScores(){return finalScores;}
+    public int getGameNumber(){return gameNumber;}
+    public Bowler getCurrentThrower(){return currentThrower;}
+    public Pinsetter getSetter(){return setter;}
+    public HashMap getScores(){return scores;}
+    public Vector getSubscribers(){return subscribers;}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public boolean getPlayAgain(){return playAgain;}
+    public void setPlayAgain(boolean value){playAgain = value;}
 
 
 //    public void setParty(Party party, boolean partyAssigned)
