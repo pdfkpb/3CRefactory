@@ -39,7 +39,6 @@ public class LaneFinishedState extends LaneRunState {
             while (scoreIt.hasNext()){
                 Bowler thisBowler = (Bowler)scoreIt.next();
                 ScoreReport sr = new ScoreReport( thisBowler, finalScores[myIndex++], gameNumber );
-                //sr.sendEmail(thisBowler.getEmail());
                 Iterator printIt = printVector.iterator();
                 while (printIt.hasNext()){
                     if (thisBowler.getNickName().equals(printIt.next())){
