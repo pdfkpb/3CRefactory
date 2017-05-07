@@ -1,12 +1,11 @@
 import java.util.Iterator;
 import java.util.Vector;
 
-public class LaneFinishedState extends LaneRunState {
-
-    public LaneFinishedState(){
-
-    }
-
+public class LaneFinishedState extends LaneRunState
+{
+    /**
+     * Takes and uses the parameters and functions from LaneRunState to run a scenario where a team has finished bowling
+     */
     @Override
     public void run() {
         EndGamePrompt endGamePrompt = new EndGamePrompt( ((Bowler) party.getMembers().get(0)).getNickName() + "'s Party" );
@@ -17,7 +16,6 @@ public class LaneFinishedState extends LaneRunState {
 
         System.out.println("result was: " + result);
 
-        // TODO: send record of scores to control desk
         if (result == 1) {					// yes, want to play again
             resetScore();
             resetBowlerIterator();
@@ -39,6 +37,7 @@ public class LaneFinishedState extends LaneRunState {
             while (scoreIt.hasNext()){
                 Bowler thisBowler = (Bowler)scoreIt.next();
                 ScoreReport sr = new ScoreReport( thisBowler, finalScores[myIndex++], gameNumber );
+                sr.sendEmail(thisBowler.getEmail());
                 Iterator printIt = printVector.iterator();
                 while (printIt.hasNext()){
                     if (thisBowler.getNickName().equals(printIt.next())){

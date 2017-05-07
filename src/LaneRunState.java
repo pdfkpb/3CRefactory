@@ -2,9 +2,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 
-/**
- * Created by Jethro Masangya on 5/1/2017.
- */
 public abstract class LaneRunState extends Thread implements PinsetterObserver
 {
     protected Party party;
@@ -53,33 +50,27 @@ public abstract class LaneRunState extends Thread implements PinsetterObserver
 
                 if (((pe.totalPinsDown() != 10) && (pe.getThrowNumber() == 2 && !tenthFrameStrike)) || (pe.getThrowNumber() == 3)) {
                     canThrowAgain = false;
-                    //publish( lanePublish() );
                 }
-
-//					if (pe.getThrowNumber() == 3) {
-//						canThrowAgain = false;
-                //publish( lanePublish() );
-//					}
             } else { // its not the 10th frame
 
                 if ((pe.pinsDownOnThisThrow() == 10) || (pe.getThrowNumber() == 2)) {		// threw a strike
                     canThrowAgain = false;
-                    //publish( lanePublish() );
-//					} else if (pe.getThrowNumber() == 2) {
-//						canThrowAgain = false;
-//						//publish( lanePublish() );
                 } else if (pe.getThrowNumber() == 3)
                     System.out.println("I'm here...");
             }
         }
-//            else {								//  this is not a real throw, probably a reset
-//			}
     }
 
+    /**
+     * Resets the iterator over bowlers to the first one in the party
+     */
     public void resetBowlerIterator(){
         this.bowlerIterator = (party.getMembers()).iterator();
     }
 
+    /**
+     * Resets all scores of the party to 0
+     */
     public void resetScore(){
         Iterator bowlIt = (party.getMembers()).iterator();
 
@@ -108,6 +99,14 @@ public abstract class LaneRunState extends Thread implements PinsetterObserver
         resetScore();
     }
 
+    /**
+     * Marks and pushes the selected bowlers score to the laneScreen
+     *
+     * @param currentBowler - The selected Bowler
+     * @param frame - The current Frame
+     * @param ball - Which ball the bowlers is on, i.e. first throw, second throw
+     * @param score - The score to be pushed to the screen
+     */
     private void markScore( Bowler currentBowler, int frame, int ball, int score ){
         int[] currentScore;
         int index =  ( (frame - 1) * 2 + ball);

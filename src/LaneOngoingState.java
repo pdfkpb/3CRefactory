@@ -1,11 +1,10 @@
 import java.util.Date;
 
-public class LaneOngoingState extends LaneRunState {
-
-    public LaneOngoingState(){
-
-    }
-
+public class LaneOngoingState extends LaneRunState
+{
+    /**
+     * Takes and uses the parameters and functions from LaneRunState to run a scenario of a team bowling
+     */
     @Override
     public void run() {
         while (gameIsHalted) {

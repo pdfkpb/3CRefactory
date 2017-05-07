@@ -163,12 +163,8 @@ public class Lane extends Thread implements PinsetterObserver {
 	private HashMap<String, LaneRunState> states;
     private LaneRunState currentState;
 
-	/** Lane()
-	 * 
-	 * Constructs a new lane and starts its thread
-	 * 
-	 * @pre none
-	 * @post a new lane has been created and its thered is executing
+	/**
+	 * Lane Constructor, creates a new lane object while initializing the necessary variables
 	 */
 	public Lane() { 
 		setter = new Pinsetter();
@@ -193,9 +189,8 @@ public class Lane extends Thread implements PinsetterObserver {
 		this.start();
 	}
 
-	/** run()
-	 * 
-	 * entry point for execution of this lane 
+	/**
+	 * Is the main running loop for the system, and chooses between different states of the party to run
 	 */
 	public void run() {
         currentState.setPlayAgain(true);
@@ -205,11 +200,10 @@ public class Lane extends Thread implements PinsetterObserver {
             if (isPartyAssigned()) {
                 if (!isGameFinished()) {
                     currentState = states.get("ongoing");
-                    setLaneSatesInfo();
                 } else {
                     currentState = states.get("finished");
-                    setLaneSatesInfo();
                 }
+				setLaneSatesInfo();
                 currentState.run();
                 getLaneStateInfo();
 
@@ -221,274 +215,90 @@ public class Lane extends Thread implements PinsetterObserver {
             }
         }
 	}
-	
-	/** recievePinsetterEvent()
-	 * 
-	 * recieves the thrown event from the pinsetter
-	 *
-	 * @pre none
-	 * @post the event has been acted upon if desiered
-	 * 
-	 * @param pe 		The pinsetter event that has been received.
+
+	/**
+	 * Passes a pinsetter event to the current runnning state of the system
+	 * @param pe - a pinsetter event
 	 */
 	public void receivePinsetterEvent(PinsetterEvent pe) {
 		currentState.receivePinsetterEvent(pe);
 	}
-	
-	/** resetBowlerIterator()
-	 * 
-	 * sets the current bower iterator back to the first bowler
-	 * 
-	 * @pre the party as been assigned
-	 * @post the iterator points to the first bowler in the party
-	 */
-	private void resetBowlerIterator() {
-		bowlerIterator = (party.getMembers()).iterator();
-	}
 
-	/** resetScores()
-	 * 
-	 * resets the scoring mechanism, must be called before scoring starts
-	 * 
-	 * @pre the party has been assigned
-	 * @post scoring system is initialized
-	 */
-	private void resetScores() {
-		Iterator bowlIt = (party.getMembers()).iterator();
-
-		while ( bowlIt.hasNext() ) {
-			int[] toPut = new int[25];
-			for ( int i = 0; i != 25; i++){
-				toPut[i] = -1;
-			}
-			scores.put( bowlIt.next(), toPut );
-		}
-
-		gameFinished = false;
-		frameNumber = 0;
-	}
-		
-	/** assignParty()
-	 * 
-	 * assigns a party to this lane
-	 * 
-	 * @pre none
-	 * @post the party has been assigned to the lane
-	 * 
-	 * @param theParty		Party to be assigned
+	/**
+	 * Passes the party in question to the current state to be assigned
+	 * @param theParty - a party object full of bowlers
 	 */
 	public void assignParty( Party theParty ) {
 		currentState.assignParty(theParty);
 	}
 
-	/** markScore()
-	 *
-	 * Method that marks a bowlers score on the board.
-	 * 
-	 * @param currentBowler		The current bowler
-	 * @param frame	The frame that bowler is on
-	 * @param ball		The ball the bowler is on
-	 * @param score	The bowler's score 
-	 */
-	private void markScore( Bowler currentBowler, int frame, int ball, int score ){
-        int[] currentScore;
-        int index =  ( (frame - 1) * 2 + ball);
-
-        currentScore = (int[]) scores.get(currentBowler);
-
-        currentScore[index - 1] = score;
-        scores.put(currentBowler, currentScore);
-        getScore(currentBowler, frame);
-        publish(lanePublish());
-	}
-
-	/** lanePublish()
-	 *
-	 * Method that creates and returns a newly created laneEvent
-	 * 
-	 * @return		The new lane event
+	/**
+	 * Gets a lane event from the current Running state and returns the event
+	 * @return - a laneEvent
 	 */
 	private LaneEvent lanePublish(  ) {
 		return currentState.lanePublish();
 	}
 
-	/** getScore()
-	 *
-	 * Method that calculates a bowlers score
-	 * 
-	 * @param bowler		The bowler that is currently up
-	 * @param frame	The frame the current bowler is on
-	 * 
-	 * @return			The bowlers total score
-	 */
-	private int getScore( Bowler bowler, int frame) {
-		int[] curScore;
-		int strikeBalls = 0;
-		int totalScore = 0;
-		curScore = (int[]) scores.get(bowler);
 
-		for (int i = 0; i != 10; i++){
-			cumulativeScores[bowlIndex][i] = 0;
-		}
 
-		int current = 2*(frame - 1)+ball-1;
-
-		//Iterate through each ball until the current one.
-		for (int i = 0; i != current+2; i++){
-			//Spare:
-			if( (i%2 == 1) && (curScore[i - 1] + curScore[i] == 10) && (i < current - 1) && (i < 19)){
-				//This ball was a the second of a spare.  
-				//Also, we're not on the current ball.
-				//Add the next ball to the ith one in cumul.
-				cumulativeScores[bowlIndex][(i/2)] += curScore[i+1] + curScore[i];
-			}
-            else if( (i < current) && (i%2 == 0) && (curScore[i] == 10)  && (i < 18)){
-				strikeBalls = 0;
-				//This ball is the first ball, and was a strike.
-				//If we can get 2 balls after it, good add them to cumul.
-				if (curScore[i+2] != -1) {
-					strikeBalls = 1;
-                    if( (curScore[i+3] != -1) || (curScore[i+4] != -1) ) {
-						//Still got em.
-						strikeBalls = 2;
-					}
-				}
-				if (strikeBalls == 2){
-					//Add up the strike.
-					//Add the next two balls to the current cumulativeScores
-					cumulativeScores[bowlIndex][i/2] += 10;
-					if(curScore[i+1] != -1) {
-						cumulativeScores[bowlIndex][i/2] += curScore[i+1] + cumulativeScores[bowlIndex][(i/2)-1];
-						if ( (curScore[i+2] != -1) && ( curScore[i+2] != -2) ){
-                            cumulativeScores[bowlIndex][(i/2)] += curScore[i+2];
-						}
-                        else if( curScore[i+3] != -2) {
-                            cumulativeScores[bowlIndex][(i/2)] += curScore[i+3];
-						}
-					}
-                    else {
-						if ( i > 0 ){
-							cumulativeScores[bowlIndex][i/2] += curScore[i+2] + cumulativeScores[bowlIndex][(i/2)-1];
-						} else {
-							cumulativeScores[bowlIndex][i/2] += curScore[i+2];
-						}
-
-						if ( (curScore[i+3] != -1) && (curScore[i+3] != -2) ){
-                            cumulativeScores[bowlIndex][(i/2)] += curScore[i+3];
-						}
-                        else {
-							cumulativeScores[bowlIndex][(i/2)] += curScore[i+4];
-						}
-					}
-				}
-                else {
-					break;
-				}
-			}
-            else {
-				//We're dealing with a normal throw, add it and be on our way.
-				if( (i%2 == 0) && (i < 18)){
-					if ( (i == 0) && (curScore[i] != -2) ) {
-						//First frame, first ball.  Set his cumul score to the first ball
-                        cumulativeScores[bowlIndex][i/2] += curScore[i];
-					}
-
-						//add his last frame's cumul to this ball, make it this frame's cumul.
-					if(curScore[i] != -2){
-						cumulativeScores[bowlIndex][i/2] += cumulativeScores[bowlIndex][i/2 - 1] + curScore[i];
-					}
-					else {
-						cumulativeScores[bowlIndex][i/2] += cumulativeScores[bowlIndex][i/2 - 1];
-					}
-					
-				}
-                else if (i < 18){
-					if( (curScore[i] != -1 && i > 2) && (curScore[i] != -2) ){
-                        cumulativeScores[bowlIndex][i/2] += curScore[i];
-					}
-				}
-				if (i == 18){
-					cumulativeScores[bowlIndex][9] += cumulativeScores[bowlIndex][8];
-				}
-
-				if ( ( (i == 18) || (i == 20) ) && (curScore[i] != -2) ) {
-					cumulativeScores[bowlIndex][9] += curScore[i];
-				}
-			}
-		}
-		return totalScore;
-	}
-
-	/** isPartyAssigned()
-	 * 
-	 * checks if a party is assigned to this lane
-	 * 
+	/**
+	 * Gets if a party is assigned from the current state
 	 * @return true if party assigned, false otherwise
 	 */
 	public boolean isPartyAssigned() {
 		return currentState.isPartyAssigned();
 	}
 	
-	/** isGameFinished
-	 * 
+	/**
+	 * Gets if the game is finished from the current state
 	 * @return true if the game is done, false otherwise
 	 */
 	public boolean isGameFinished() {
 		return currentState.isGameFinished();
 	}
 
-	/** subscribe
-	 * 
-	 * Method that will add a subscriber
-	 * 
-	 * @param laneObserver Observer that is to be added
+	/**
+	 * Passes a laneObserver to the current state
+	 * @param laneObserver - Observer that is to be added
 	 */
-
 	public void subscribe( LaneObserver laneObserver ) {
 		currentState.subscribe(laneObserver);
 	}
 
-	/** unsubscribe
-	 * 
-	 * Method that unsubscribes an observer from this object
-	 * 
-	 * @param removing	The observer to be removed
+	/**
+	 * Method to pass a laneObserver to remove to the current state
+	 * @param removing - The observer to be removed
 	 */
-	
 	public void unsubscribe( LaneObserver removing ) {
 		currentState.unsubscribe(removing);
 	}
 
-	/** publish
-	 *
-	 * Method that publishes an event to subscribers
-	 * 
+	/**
+	 * Calls the publish method of the current state
 	 * @param event	Event that is to be published
 	 */
-
 	public void publish( LaneEvent event ) {
 		currentState.publish(event);
 	}
 
 	/**
-	 * Accessor to get this Lane's pinsetter
-	 * 
-	 * @return		A reference to this lane's pinsetter
+	 * Gets the pinsetter from the current state
+	 * @return - A reference to this lane's pinsetter
 	 */
-
 	public Pinsetter getPinsetter() {
 		return currentState.getPinsetter();
 	}
 
 	/**
-	 * Pause the execution of this game
+	 * Pause the execution of this game by calling pause in the current state
 	 */
 	public void pauseGame() {
 		currentState.pauseGame();
 	}
 	
 	/**
-	 * Resume the execution of this game
+	 * Resume the execution of this game by calling unPause in the current state
 	 */
 	public void unPauseGame() {
 		currentState.unPauseGame();
@@ -504,7 +314,7 @@ public class Lane extends Thread implements PinsetterObserver {
     }
 
     /**
-     * Extracts all the information in the states.
+     * Extracts all the information from the state.
      */
     private void getLaneStateInfo(){
         this.party = currentState.getParty();
