@@ -416,7 +416,7 @@ public class Lane extends Thread implements PinsetterObserver {
 						}
 					}
                     else {
-						if ( i/2 > 0 ){
+						if ( i > 0 ){
 							cumulativeScores[bowlIndex][i/2] += curScore[i+2] + cumulativeScores[bowlIndex][(i/2)-1];
 						} else {
 							cumulativeScores[bowlIndex][i/2] += curScore[i+2];
@@ -437,35 +437,31 @@ public class Lane extends Thread implements PinsetterObserver {
             else {
 				//We're dealing with a normal throw, add it and be on our way.
 				if( (i%2 == 0) && (i < 18)){
-					if ( (i/2 == 0) && (curScore[i] != -2) ) {
+					if ( (i == 0) && (curScore[i] != -2) ) {
 						//First frame, first ball.  Set his cumul score to the first ball
                         cumulativeScores[bowlIndex][i/2] += curScore[i];
 					}
-                    else if (i/2 != 9){
+
 						//add his last frame's cumul to this ball, make it this frame's cumul.
-						if(curScore[i] != -2){
-							cumulativeScores[bowlIndex][i/2] += cumulativeScores[bowlIndex][i/2 - 1] + curScore[i];
-						}
-                        else {
-							cumulativeScores[bowlIndex][i/2] += cumulativeScores[bowlIndex][i/2 - 1];
-						}	
+					if(curScore[i] != -2){
+						cumulativeScores[bowlIndex][i/2] += cumulativeScores[bowlIndex][i/2 - 1] + curScore[i];
 					}
+					else {
+						cumulativeScores[bowlIndex][i/2] += cumulativeScores[bowlIndex][i/2 - 1];
+					}
+					
 				}
                 else if (i < 18){
 					if( (curScore[i] != -1 && i > 2) && (curScore[i] != -2) ){
                         cumulativeScores[bowlIndex][i/2] += curScore[i];
 					}
 				}
-				if (i/2 == 9){
-					if (i == 18){
-						cumulativeScores[bowlIndex][9] += cumulativeScores[bowlIndex][8];
-					}
-					if(curScore[i] != -2){
-						cumulativeScores[bowlIndex][9] += curScore[i];
-					}
+				if (i == 18){
+					cumulativeScores[bowlIndex][9] += cumulativeScores[bowlIndex][8];
 				}
-                else if ( (i/2 == 10) && (curScore[i] != -2) ) {
-                    cumulativeScores[bowlIndex][9] += curScore[i];
+
+				if ( ( (i == 18) || (i == 20) ) && (curScore[i] != -2) ) {
+					cumulativeScores[bowlIndex][9] += curScore[i];
 				}
 			}
 		}
