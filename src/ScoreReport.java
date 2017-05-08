@@ -51,31 +51,15 @@ public class ScoreReport {
 
 	public void sendEmail(String recipient) {
 		try {
-			Socket s = new Socket("osfmail.rit.edu", 25);
-			BufferedReader in =
-				new BufferedReader(
-					new InputStreamReader(s.getInputStream(), "8859_1"));
-			BufferedWriter out =
-				new BufferedWriter(
-					new OutputStreamWriter(s.getOutputStream(), "8859_1"));
+			System.out.println("Subject: Bowling Score Report ");
+			System.out.println("From: <Lucky Strikes Bowling Club>");
+			System.out.println("Content-Type: text/plain; charset=\"us-ascii\"\r\n");
+			System.out.println(content + "\n\n");
+			System.out.println("\r\n");
 
-			String boundary = "DataSeparatorString";
-
-			// here you are supposed to send your username
-			sendln(in, out, "HELO world");
-			sendln(in, out, "MAIL FROM: <abc1234@rit.edu>");
-			sendln(in, out, "RCPT TO: <" + recipient + ">");
-			sendln(in, out, "DATA");
-			sendln(out, "Subject: Bowling Score Report ");
-			sendln(out, "From: <Lucky Strikes Bowling Club>");
-
-			sendln(out, "Content-Type: text/plain; charset=\"us-ascii\"\r\n");
-			sendln(out, content + "\n\n");
-			sendln(out, "\r\n");
-
-			sendln(in, out, ".");
-			sendln(in, out, "QUIT");
-			s.close();
+			System.out.println(".");
+			System.out.println("QUIT");
+			//s.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
